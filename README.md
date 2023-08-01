@@ -21,8 +21,8 @@
 3. Переместиться в папку где лежит скачанный проект
 4. Выполнить следующую команду
 
-   `sudo apt update && sudo apt install ./helloworld-0.0.{Номер билда}-Linux.deb`
+   `sudo apt update && sudo apt install ./ip_filter-0.0.{Номер билда}-Linux.deb`
 
 5. После установки путь к установленному проекту будет добавлен PATH, поэтому остается ввести в консоле имя проекта:
 
-   `yourname@yourname-VirtualBox:~$ helloworld_cli`
+   `yourname@yourname-VirtualBox:~$ ip_filter_cli`
