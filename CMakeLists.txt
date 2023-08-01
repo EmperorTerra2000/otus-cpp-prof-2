@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 
-#set(PROJECT_VESRION 0.0.${PATCH_VERSION})
+set(PROJECT_VESRION 0.0.${PATCH_VERSION})
 
-project(ip_filter)
+project(ip_filter VERSION ${PROJECT_VESRION})
 
 set(CMAKE_BUILD_TYPE Debug)
 
