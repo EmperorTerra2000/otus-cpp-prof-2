@@ -23,6 +23,8 @@
 
    `sudo apt update && sudo apt install ./ip_filter-0.0.{Номер билда}-Linux.deb`
 
-5. После установки путь к установленному проекту будет добавлен PATH, поэтому остается ввести в консоле имя проекта:
+5. После установки путь к установленному проекту будет добавлен PATH, поэтому остается ввести в консоле имя проекта
+6. Перед тем как запустить программу необходимо в той директории скопировать файл ip_filter.tsv
+7. Запуск программы
 
-   `yourname@yourname-VirtualBox:~$ ip_filter_cli`
+   `yourname@yourname-VirtualBox:~$ cat ip_filter.tsv | ip_filter_cli`

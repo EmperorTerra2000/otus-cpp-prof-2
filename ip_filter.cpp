@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <array>
 #include <algorithm>
 
 // ("",  '.') -> [""]
@@ -30,11 +31,13 @@ std::vector<std::string> split(const std::string &str, char d)
     return r;
 }
 
-void print(std::vector<std::vector<std::string>> &parameter);
-void print_part(const std::vector<std::string> &param);
-void filter(std::vector<std::vector<std::string>> &ip_pool, std::string match);
-void filter(std::vector<std::vector<std::string>> &ip_pool, std::string match_1, std::string match_2);
-void filter_any(std::vector<std::vector<std::string>> &ip_pool, std::string match);
+template <typename T>
+void print(const T &parameter);
+template <typename T>
+void print_part(const T &param);
+void filter(std::vector<std::array<int, 4>> &ip_pool, int match);
+void filter(std::vector<std::array<int, 4>> &ip_pool, int match_1, int match_2);
+void filter_any(std::vector<std::array<int, 4>> &ip_pool, int match);
 
 int main()
 {
@@ -42,7 +45,7 @@ int main()
     {
         std::vector<std::vector<std::string>> ip_pool;
         // вектор из ip адресов в hex представлении
-        std::vector<unsigned int> ip_pool_hex;
+        std::vector<std::array<int, 4>> ip_pool_int;
 
         for (std::string line; std::getline(std::cin, line);)
         {
@@ -52,38 +55,33 @@ int main()
 
         // TODO reverse lexicographically sort
 
-        // переводим строку с ip адресом в hex формат и пушим в вектор ip_pool_hex
+        // переводим строку с ip адресом в числовое представление
         for (auto ip = ip_pool.cbegin(); ip != ip_pool.cend(); ++ip)
         {
-            unsigned int res = std::stoi(ip->at(0)) << 24 |
-                               std::stoi(ip->at(1)) << 16 |
-                               std::stoi(ip->at(2)) << 8 |
-                               std::stoi(ip->at(3));
+            std::array<int, 4> ip_array{
+                std::stoi(ip->at(0)),
+                std::stoi(ip->at(1)),
+                std::stoi(ip->at(2)),
+                std::stoi(ip->at(3))};
 
-            ip_pool_hex.push_back(res);
+            ip_array.size();
+
+            ip_pool_int.push_back(std::move(ip_array));
         }
 
         ip_pool.clear();
 
         // сортировка ip адресов в hex формате производится лексикографически
         // сортировка по убыванию
-        std::sort(ip_pool_hex.begin(), ip_pool_hex.end(), std::greater<unsigned int>());
-
-        // обратно переводим из hex в string и пушим в вектор ip_pool
-        for (auto ip = ip_pool_hex.cbegin(); ip != ip_pool_hex.cend(); ++ip)
-        {
-            ip_pool.push_back({std::to_string((*(ip) >> 24) & 0xFF),
-                               std::to_string((*(ip) >> 16) & 0xFF),
-                               std::to_string((*(ip) >> 8) & 0xFF),
-                               std::to_string((*(ip)) & 0xFF)});
-        }
+        std::sort(ip_pool_int.begin(), ip_pool_int.end(), [](std::array<int, 4> a, std::array<int, 4> b)
+                  { return a > b; });
 
         // выводим результат
-        print(ip_pool);
+        print(ip_pool_int);
 
-        filter(ip_pool, "1");
-        filter(ip_pool, "46", "70");
-        filter_any(ip_pool, "46");
+        filter(ip_pool_int, 1);
+        filter(ip_pool_int, 46, 70);
+        filter_any(ip_pool_int, 46);
 
         // 222.173.235.246
         // 222.130.177.64
@@ -156,7 +154,8 @@ int main()
     return 0;
 }
 
-void print(std::vector<std::vector<std::string>> &parameter)
+template <typename T>
+void print(const T &parameter)
 {
     for (auto ip = parameter.cbegin(); ip != parameter.cend(); ++ip)
     {
@@ -164,7 +163,8 @@ void print(std::vector<std::vector<std::string>> &parameter)
     }
 }
 
-void print_part(const std::vector<std::string> &param)
+template <typename T>
+void print_part(const T &param)
 {
     for (auto ip_part = param.cbegin(); ip_part != param.cend(); ++ip_part)
     {
@@ -177,7 +177,7 @@ void print_part(const std::vector<std::string> &param)
     std::cout << std::endl;
 }
 
-void filter(std::vector<std::vector<std::string>> &ip_pool, std::string match)
+void filter(std::vector<std::array<int, 4>> &ip_pool, int match)
 {
     std::for_each(begin(ip_pool), end(ip_pool), [&match](auto &el)
                   {
@@ -186,7 +186,7 @@ void filter(std::vector<std::vector<std::string>> &ip_pool, std::string match)
 		} });
 }
 
-void filter(std::vector<std::vector<std::string>> &ip_pool, std::string match_1, std::string match_2)
+void filter(std::vector<std::array<int, 4>> &ip_pool, int match_1, int match_2)
 {
     std::for_each(begin(ip_pool), end(ip_pool), [&match_1, &match_2](auto &el)
                   {
@@ -195,7 +195,7 @@ void filter(std::vector<std::vector<std::string>> &ip_pool, std::string match_1,
 		} });
 }
 
-void filter_any(std::vector<std::vector<std::string>> &ip_pool, std::string match)
+void filter_any(std::vector<std::array<int, 4>> &ip_pool, int match)
 {
     std::for_each(begin(ip_pool), end(ip_pool), [&match](auto &el)
                   {
